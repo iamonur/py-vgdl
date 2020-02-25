@@ -140,6 +140,51 @@ class ReplayVGDLController(HumanController):
             self.spy_func(self.env.unwrapped, step, actual_action)
 
 
+class RecordedController():
+    """
+    This is just a controller for simple bot-play. You only need to give it the
+    gym environment name, a list of moves, and the fps rate(optional).
+    """
+    def __init__(self, env_name, record, fps=15):
+
+        #Always plays vgdl games, this is no general class to be push requested.
+
+        if not env_name.startswith('vgdl'):
+            raise 'Invalid game! Only do this with vgdl games.'
+
+        self.env_name = env_name
+        self.env = gym.make(env_name)
+        self.fps = fps
+        self.cummulative_reward = 0
+        self.record = record
+
+    def play(self):
+
+        self.env.reset()
+
+        for a in self.record:
+
+            #picks actions one by one, and executes them in a frame.
+
+            _, reward, done, _ = self.env.step(a)
+
+            if(reward):
+                logger.debug("reward %0.3f" % reward)
+
+            self.cummulative_reward += reward
+            window_open = self.env.render()
+
+            if not window_open:
+                logger.debug("Window closed")
+
+            if done:
+                logger.debug("Game ended before moves, you might want to check")
+
+            time.sleep(1. / self.fps)
+
+
+
+
 def determine_controller(env_name):
     if env_name.startswith('vgdl'):
         return HumanVGDLController

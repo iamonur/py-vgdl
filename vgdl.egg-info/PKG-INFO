@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: vgdl
+Version: 2.0.1.dev25
+Summary: VGDL 2: a video game description language for AI research
+Home-page: UNKNOWN
+Author: Ruben Vereecken
+Author-email: ruben.vereecken@gmail.com
+License: BSD
+Project-URL: Source Code, https://github.com/rubenvereecken/py-vgdl
+Description: VGDL 2: a video game description language for AI research
+Platform: UNKNOWN
+Provides-Extra: human
+Provides-Extra: pybrain
+Provides-Extra: all
+Provides-Extra: gym

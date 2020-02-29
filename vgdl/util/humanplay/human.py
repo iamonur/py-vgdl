@@ -169,7 +169,7 @@ class RecordedController():
             _, reward, done, _ = self.env.step(a)
 
             if(reward):
-                logger.debug("reward %0.3f" % reward)
+                return reward
 
             self.cummulative_reward += reward
             window_open = self.env.render()

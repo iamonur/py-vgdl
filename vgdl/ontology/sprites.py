@@ -1,7 +1,7 @@
 import itertools
 import logging
 from typing import NewType, Optional, Union, Dict, List, Tuple
-
+from vgdl.ai import AStarWorld
 import numpy as np
 import pygame
 from pygame.math import Vector2
@@ -11,6 +11,7 @@ from vgdl.core import Color
 from vgdl.tools import unit_vector
 from .constants import *
 from .physics import GridPhysics, ContinuousPhysics
+
 
 
 __all__ = [
@@ -213,6 +214,7 @@ class Bomber(SpawnPoint, Missile):
         SpawnPoint.update(self, game)
 
 class Chaser(RandomNPC):
+    
     """ Pick an action that will move toward the closest sprite of the provided target type. """
     stype = None
     fleeing = False
@@ -251,14 +253,23 @@ class Chaser(RandomNPC):
             options.extend(self._movesToward(game, target))
         if len(options) == 0:
             options = BASEDIRS
-        self.physics.active_movement(self, game.random_generator.choice(options))
+        #Directions are now deterministic since we want SPIN and
+        elif LEFT in options:
+            self.physics.active_movement(self, LEFT)
+        elif UP in options:
+            self.physics.active_movement(self, UP)
+        elif RIGHT in options:
+            self.physics.active_movement(self, RIGHT)
+        elif DOWN in options:
+            self.physics.active_movement(self, DOWN)
+
 
 class Fleeing(Chaser):
     """ Just reversing directions"""
     fleeing = True
 
 class AStarChaser(RandomNPC):
-    from vgdl.ai import AStarWorld
+
     """ Move towards the character using A* search. """
     stype = None
     fleeing = False
@@ -341,4 +352,3 @@ class AStarChaser(RandomNPC):
                     movement = LEFT
 
         self.physics.active_movement(self, movement)
-

@@ -4,6 +4,7 @@ from typing import NewType, Optional, Union, Dict, List, Tuple
 
 import numpy as np
 import pygame
+import collections
 from pygame.math import Vector2
 
 from vgdl.core import Action, Physics
@@ -13,8 +14,8 @@ __all__ = [
     'GridPhysics',
     'ContinuousPhysics',
     'GravityPhysics'
-]
-
+]  
+ 
 class GridPhysics(Physics):
     """ Define actions and key-mappings for grid-world dynamics. """
 
@@ -48,6 +49,31 @@ class GridPhysics(Physics):
         """ Grid physics use Hamming distances. """
         return (abs(r1.top - r2.top)
                 + abs(r1.left - r2.left))
+
+    def new_distance(self, level, wall='1', floor='0', frm=(0,0), goal='G'):
+        level = level.replace("E","0")
+        level = level.replace("A","0")
+        level = level.split("\n")
+        level = level[:-1]
+        if level[frm[1]][frm[0]] == wall:
+            return 10000
+        
+        queue = collections.deque([[frm]])
+        seen = set([frm])
+        width = len(level[0])
+        height = len(level)
+        while queue:
+            path = queue.popleft()
+            x, y = path[-1]
+            if level[y][x] == goal:
+                return len(path)
+            for x2, y2 in ((x+1,y), (x-1,y), (x,y+1), (x,y-1)):
+                if 0 <= x2 < width and 0 <= y2 < height and level[y2][x2] != wall and (x2, y2) not in seen:
+                    queue.append(path + [(x2, y2)])
+                    seen.add((x2, y2))
+
+
+
 
 
 class ContinuousPhysics(GridPhysics):

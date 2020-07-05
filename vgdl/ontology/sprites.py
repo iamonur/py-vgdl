@@ -15,7 +15,7 @@ from .physics import GridPhysics, ContinuousPhysics
 
 
 __all__ = [
-    'AStarChaser',
+    'SmartChaser',
     'Bomber',
     'Chaser',
     'Conveyor',
@@ -213,6 +213,48 @@ class Bomber(SpawnPoint, Missile):
         Missile.update(self, game)
         SpawnPoint.update(self, game)
 
+class SmartChaser(RandomNPC):
+
+    stype = None
+    fleeing = False
+
+    def _closestTargets(self, game):
+        bestd = 1e100
+        res = []
+        for target in game.get_sprites(self.stype):
+            d = self.physics.distance(self.rect, target.rect)
+            if d < bestd:
+                bestd = d
+                res = [target]
+            elif d == bestd:
+                res.append(target)
+        return res
+
+    def _movesToward(self, game, target):
+        res = []
+        basedist = self.physics.new_distance(game.levelstring, frm=(self.rect.left, self.rect.top))
+        
+        for a in BASEDIRS:
+            r = self.rect.copy()
+            r = r.move(a)
+            newdist = self.physics.new_distance(game.levelstring, frm=(r.left, r.top))
+            print(newdist)
+            if self.fleeing and basedist < newdist:
+                res.append(a)
+            if not self.fleeing and basedist > newdist:
+                res.append(a)
+        return res
+
+    def update(self, game):
+        VGDLSprite.update(self, game)
+        options = []
+        for target in self._closestTargets(game):
+            options.extend(self._movesToward(game, target))
+        if len(options) == 0:
+            raise "Cannot move!"
+        self.physics.active_movement(self, options[0])#TODO: GONNA LOOK AT THIS
+        
+
 class Chaser(RandomNPC):
     
     """ Pick an action that will move toward the closest sprite of the provided target type. """
@@ -232,8 +274,7 @@ class Chaser(RandomNPC):
         return res
 
     def _movesToward(self, game, target):
-        """ Find the canonical direction(s) which move toward
-        the target. """
+        """ Find the canonical direction(s) which move toward the target. """
         res = []
         basedist = self.physics.distance(self.rect, target.rect)
         for a in BASEDIRS:

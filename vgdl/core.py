@@ -535,6 +535,7 @@ class BasicGame:
     def build_level(self, lstr):
         # TODO delegate this to a level parser
         lines = [l for l in lstr.split("\n") if len(l) > 0]
+        self.full_level = lines
         lengths = [len(l) for l in lines]
         assert min(lengths) == max(lengths), "Inconsistent line lengths."
 

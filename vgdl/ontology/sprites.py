@@ -238,7 +238,6 @@ class SmartChaser(RandomNPC):
             r = self.rect.copy()
             r = r.move(a)
             newdist = self.physics.new_distance(game.levelstring, frm=(r.left, r.top))
-            print(newdist)
             if self.fleeing and basedist < newdist:
                 res.append(a)
             if not self.fleeing and basedist > newdist:

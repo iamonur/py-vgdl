@@ -1,0 +1,24 @@
+
+BasicGame
+    SpriteSet
+        goalportal > Immovable color=GREEN
+        wall > Immovable color=BLACK
+        floor > Immovable color=BROWN
+        opponent > SmartChaser stype=goalportal color=RED
+        players > MovingAvatar
+            avatar > alternate_keys=True
+    TerminationSet
+        SpriteCounter stype=goalportal limit=0 win=False
+        SpriteCounter stype=opponent limit=0 win=True
+    InteractionSet
+        goalportal opponent > killSprite scoreChange=-1
+        avatar wall > stepBack
+        opponent wall > stepBack
+        opponent avatar > killSprite scoreChange=1
+        avatar goalportal > stepBack
+    LevelMapping
+        1 > wall
+        E > opponent floor
+        G > goalportal
+        A > avatar floor
+        0 > floor

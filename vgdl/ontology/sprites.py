@@ -15,7 +15,7 @@ from .physics import GridPhysics, ContinuousPhysics
 
 
 __all__ = [
-    'AStarChaser',
+    'SmartChaser',
     'Bomber',
     'Chaser',
     'Conveyor',
@@ -212,6 +212,50 @@ class Bomber(SpawnPoint, Missile):
     def update(self, game):
         Missile.update(self, game)
         SpawnPoint.update(self, game)
+
+class SmartChaser(RandomNPC):
+    
+    """ Pick an action that will move toward the closest sprite of the provided target type. """
+    stype = None
+    fleeing = False
+
+    def _closestTargets(self, game):
+        bestd = 1e100
+        res = []
+        for target in game.get_sprites(self.stype):
+            d = self.physics.new_distance(game.levelstring, (self.rect.left, self.rect.top))
+            if d < bestd:
+                bestd = d
+                res = [target]
+            elif d == bestd:
+                res.append(target)
+        return res
+
+    def _movesToward(self, game, target):
+        """ Find the canonical direction(s) which move toward
+        the target. """
+        res = []
+        basedist = self.physics.new_distance(game.levelstring, frm=(self.rect.left, self.rect.top))
+        
+        for a in BASEDIRS:
+            r = self.rect.copy()
+            r = r.move(a)
+            newdist = self.physics.new_distance(game.levelstring, frm=(r.left, r.top))
+            if self.fleeing and basedist < newdist:
+                res.append(a)
+            if not self.fleeing and basedist > newdist:
+                res.append(a)
+        
+        return res
+
+    def update(self, game):
+        VGDLSprite.update(self, game)
+        options = []
+        for target in self._closestTargets(game):
+            options.extend(self._movesToward(game, target))
+        if len(options) == 0:
+            return
+        self.physics.active_movement(self, options[0])
 
 class Chaser(RandomNPC):
     

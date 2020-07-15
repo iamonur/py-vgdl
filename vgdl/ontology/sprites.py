@@ -14,6 +14,7 @@ from .physics import GridPhysics, ContinuousPhysics
 
 
 
+
 __all__ = [
     'SmartChaser',
     'Bomber',
@@ -184,7 +185,6 @@ class WalkJumper(Walker):
                 self.physics.active_movement(self, (0, -self.strength))
         Walker.update(self, game)
 
-
 class RandomInertial(OrientedSprite, RandomNPC):
     physicstype = ContinuousPhysics
 
@@ -232,12 +232,12 @@ class SmartChaser(RandomNPC):
 
     def _movesToward(self, game, target):
         res = []
-        basedist = self.physics.new_distance(game.levelstring, frm=(self.rect.left, self.rect.top))
+        basedist = self.physics.astar_distance(game.levelstring, frm=(self.rect.left, self.rect.top))
         
         for a in BASEDIRS:
             r = self.rect.copy()
             r = r.move(a)
-            newdist = self.physics.new_distance(game.levelstring, frm=(r.left, r.top))
+            newdist = self.physics.astar_distance(game.levelstring, frm=(r.left, r.top))
             if self.fleeing and basedist < newdist:
                 res.append(a)
             if not self.fleeing and basedist > newdist:

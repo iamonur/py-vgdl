@@ -1,7 +1,7 @@
 import itertools
 import logging
 from typing import NewType, Optional, Union, Dict, List, Tuple
-
+from math import sqrt
 import numpy as np
 import pygame
 from pygame.math import Vector2
@@ -125,8 +125,9 @@ def search(maze, start, end, cost=1):
                 continue
 
             child.g = current_node.g + cost
-            child.h = (((child.position[0] - end_node.position[0]) ** 2) + 
-                       ((child.position[1] - end_node.position[1]) ** 2)) 
+            #
+            child.h = sqrt(((child.position[0] - end_node.position[0]) ** 2) + 
+                       ((child.position[1] - end_node.position[1]) ** 2))
 
             child.f = child.g + child.h
 
@@ -141,6 +142,7 @@ def astartwo(li):
         for cell in line:
             if cell > ret:
                 ret = cell
+#    print(ret)
     return ret
 
 class GridPhysics(Physics):
@@ -242,7 +244,7 @@ class GridPhysics(Physics):
         except:
             return 10000
         asd = astartwo(search(level, frm, to))
-        print(asd)
+        #print(asd)
         return asd
 
 

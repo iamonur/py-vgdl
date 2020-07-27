@@ -214,7 +214,7 @@ class Bomber(SpawnPoint, Missile):
         SpawnPoint.update(self, game)
 
 class SmartChaser(RandomNPC):
-
+    
     stype = None
     fleeing = False
 
@@ -233,16 +233,17 @@ class SmartChaser(RandomNPC):
     def _movesToward(self, game, target):
         res = []
         basedist = self.physics.astar_distance(game.levelstring, frm=(self.rect.left, self.rect.top))
-        
-        for a in BASEDIRS:
+        #self.basedirs = [UP,RIGHT,DOWN,LEFT]
+        self.basedirs = [RIGHT,UP,LEFT,DOWN]
+        for a in self.basedirs:
             r = self.rect.copy()
             r = r.move(a)
             newdist = self.physics.astar_distance(game.levelstring, frm=(r.left, r.top))
             if self.fleeing and basedist < newdist:
-                res.append(a)
+                ret = a
             if not self.fleeing and basedist > newdist:
-                res.append(a)
-        return res
+                return [a]
+        return [ret]
 
     def update(self, game):
         VGDLSprite.update(self, game)
@@ -251,6 +252,8 @@ class SmartChaser(RandomNPC):
             options.extend(self._movesToward(game, target))
         if len(options) == 0:
             raise "Cannot move!"
+        #print("a")
+        print(options[0])
         self.physics.active_movement(self, options[0])#TODO: GONNA LOOK AT THIS
         
 

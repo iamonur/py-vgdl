@@ -218,11 +218,15 @@ class Bomber(SpawnPoint, Missile):
 
 class SmartChaser(RandomNPC):
 <<<<<<< HEAD
+<<<<<<< HEAD
     
     """ Pick an action that will move toward the closest sprite of the provided target type. """
 =======
 
 >>>>>>> bd0b1135d58fe58b6c1ba2cbbb668fe9f2451e2b
+=======
+    
+>>>>>>> 56a40b18360dcd2b618248bdb5ef836087df0b74
     stype = None
     fleeing = False
 
@@ -251,9 +255,15 @@ class SmartChaser(RandomNPC):
 =======
         res = []
         basedist = self.physics.astar_distance(game.levelstring, frm=(self.rect.left, self.rect.top))
+<<<<<<< HEAD
 >>>>>>> bd0b1135d58fe58b6c1ba2cbbb668fe9f2451e2b
         
         for a in BASEDIRS:
+=======
+        #self.basedirs = [UP,RIGHT,DOWN,LEFT]
+        self.basedirs = [RIGHT,UP,LEFT,DOWN]
+        for a in self.basedirs:
+>>>>>>> 56a40b18360dcd2b618248bdb5ef836087df0b74
             r = self.rect.copy()
             r = r.move(a)
 <<<<<<< HEAD
@@ -262,14 +272,19 @@ class SmartChaser(RandomNPC):
             newdist = self.physics.astar_distance(game.levelstring, frm=(r.left, r.top))
 >>>>>>> bd0b1135d58fe58b6c1ba2cbbb668fe9f2451e2b
             if self.fleeing and basedist < newdist:
-                res.append(a)
+                ret = a
             if not self.fleeing and basedist > newdist:
+<<<<<<< HEAD
                 res.append(a)
 <<<<<<< HEAD
         
 =======
 >>>>>>> bd0b1135d58fe58b6c1ba2cbbb668fe9f2451e2b
         return res
+=======
+                return [a]
+        return [ret]
+>>>>>>> 56a40b18360dcd2b618248bdb5ef836087df0b74
 
     def update(self, game):
         VGDLSprite.update(self, game)
@@ -282,6 +297,8 @@ class SmartChaser(RandomNPC):
         self.physics.active_movement(self, options[0])
 =======
             raise "Cannot move!"
+        #print("a")
+        print(options[0])
         self.physics.active_movement(self, options[0])#TODO: GONNA LOOK AT THIS
         
 >>>>>>> bd0b1135d58fe58b6c1ba2cbbb668fe9f2451e2b

@@ -6,6 +6,10 @@ from typing import Union, List, Dict
 
 class AvatarOrientedObserver(StateObserver):
 
+    def __init__(self, game):
+        super().__init__(game)
+        self.game = game
+
     def _get_distance(self, s1, s2):
         return math.hypot(s1.rect.x - s2.rect.x, s1.rect.y - s2.rect.y)
 

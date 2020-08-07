@@ -214,8 +214,6 @@ class GridPhysics(Physics):
 
         return 10000
 
-<<<<<<< HEAD
-=======
     def astar_distance(self, level, frm=(0,0)):
         #level = level.replace("E","0")
         #level = level.replace("A","0")
@@ -251,7 +249,6 @@ class GridPhysics(Physics):
 
 
 
->>>>>>> bd0b1135d58fe58b6c1ba2cbbb668fe9f2451e2b
 
 class ContinuousPhysics(GridPhysics):
     def passive_movement(self, sprite):

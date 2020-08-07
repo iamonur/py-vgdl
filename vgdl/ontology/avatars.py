@@ -24,6 +24,7 @@ __all__ = [
     'InertialAvatar',
     'MarioAvatar',
     'MovingAvatar',
+    'MazeAvatar',
     'NoisyRotatingFlippingAvatar',
     'OrientedAvatar',
     'RotatingAvatar',
@@ -70,6 +71,67 @@ class MovingAvatar(VGDLSprite, Avatar):
         actions["LEFT"] = Action(K_LEFT)
         actions["RIGHT"] = Action(K_RIGHT)
         actions["NO_OP"] = Action()
+        return actions
+
+    def _read_action(self, game) -> Action:
+        """
+        An action can consist of multiple key presses. The action corresponding
+        to the most key presses will be returned. Ties are broken arbitrarily.
+        """
+        active_keys = tuple(sorted(game.active_keys))
+
+        # Up to 3 buttons active at a time, at least 0,
+        for num_keys in range(max(3, len(active_keys)), -1, -1):
+
+            # Find the longest key combo that matches a known action
+            for key_combo in itertools.combinations(active_keys, num_keys):
+                if key_combo in self.keys_to_action:
+                    return self.keys_to_action[key_combo]
+
+        assert False, 'No valid actions encountered, consider allowing NO_OP'
+
+
+    def update(self, game):
+        VGDLSprite.update(self, game)
+        action = self._read_action(game)
+        if not action == NOOP:
+            self.physics.active_movement(self, action)
+
+class MazeAvatar(VGDLSprite, Avatar):
+    """ Default avatar, moves in the 4 cardinal directions. """
+    color = WHITE
+    speed = 1 # type: Optional[int]
+    is_avatar = True
+    alternate_keys=False
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        possible_actions = self.__class__.declare_possible_actions()
+        self.keys_to_action = {tuple(sorted(a.keys)): a for a in possible_actions.values()}
+
+
+    @classmethod
+    def declare_possible_actions(cls) -> Dict[str, Action]:
+        """
+        Assume this does not change throughout the game. That is, we commit
+        to the semantics that all actions are always possible, no matter
+        whether they will actually have an effect or not.
+
+        Composite actions (multiple keys) must be defined separately.
+        It is important that a composite action is defined explicitly,
+        as most RL agents work with enumerated actions instead of
+        actions represented by multi-dimensional vectors (i.e. keypresses).
+        """
+        from pygame.locals import K_LEFT, K_RIGHT, K_UP, K_DOWN
+        # Relies on Python 3.6 dictionary ordering, so actions are always
+        # considered in the same order
+        actions = {}
+        actions["UP"] = Action(K_UP)
+        actions["DOWN"] = Action(K_DOWN)
+        actions["LEFT"] = Action(K_LEFT)
+        actions["RIGHT"] = Action(K_RIGHT)
         return actions
 
     def _read_action(self, game) -> Action:

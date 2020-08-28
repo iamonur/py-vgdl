@@ -157,6 +157,7 @@ class RecordedController():
         self.fps = fps
         self.cummulative_reward = 0
         self.record = record
+        self.terminal = False
 
     def play(self):
 
@@ -172,6 +173,7 @@ class RecordedController():
                 logger.debug("reward %0.3f" % reward)
 
             self.cummulative_reward += reward
+            self.terminal = done
             window_open = self.env.render()
 
             if not window_open:

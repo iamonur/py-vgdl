@@ -8,6 +8,7 @@ import numpy as np
 from .list_space import list_space
 
 
+
 class VGDLEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
@@ -21,7 +22,6 @@ class VGDLEnv(gym.Env):
                  **kwargs):
         # For rendering purposes only
         self.render_block_size = kwargs.pop('block_size')
-
         # Variables
         self._obs_type = obs_type
         self.viewer = None
@@ -36,7 +36,6 @@ class VGDLEnv(gym.Env):
                 level_desc = myfile.read()
             self.level_name = os.path.basename(level_file).split('.')[0]
             self.loadGame(game_desc, level_desc)
-
 
     def loadGame(self, game_desc, level_desc, **kwargs):
 

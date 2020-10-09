@@ -126,9 +126,9 @@ def search(maze, start, end, cost=1):
 
             child.g = current_node.g + cost
             #
-            child.h = sqrt(((child.position[0] - end_node.position[0]) ** 2) + 
-                       ((child.position[1] - end_node.position[1]) ** 2))
-
+            #child.h = sqrt(((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2))
+            #Using manhattan distance for shortest path.
+            child.h = abs((child.position[0] - end_node.position[0])) + abs((child.position[1] - end_node.position[1]))
             child.f = child.g + child.h
 
             if len([i for i in yet_to_visit_list if child == i and child.g > i.g]) > 0:
@@ -142,8 +142,25 @@ def astartwo(li):
         for cell in line:
             if cell > ret:
                 ret = cell
-#    print(ret)
     return ret
+"""
+def getAStarList()
+
+def getAMoveList(li, start=(0,0), end=(0,0)):
+    ret = []
+    if start == end:
+        return ret
+    #TODO: Figure next move and append it.
+    if 
+    ret.append()
+    #Figure all next moves and append it.
+    temp = getAMoveList(li,,end)
+    if temp == []:
+        return ret
+    ret.append(temp)
+    return ret
+"""
+
 
 class GridPhysics(Physics):
     """ Define actions and key-mappings for grid-world dynamics. """
@@ -172,7 +189,6 @@ class GridPhysics(Physics):
             if isinstance(action, Action):
                 action = action.as_vector()
             sprite._update_position(action, speed * self.gridsize[0])
-
 
     def distance(self, r1, r2):
         """ Grid physics use Hamming distances. """
@@ -215,11 +231,9 @@ class GridPhysics(Physics):
         return 10000
 
     def astar_distance(self, level, frm=(0,0)):
-        #level = level.replace("E","0")
-        #level = level.replace("A","0")
         level = level.split("\n")
         level = level[:-1]
-        #Change it to a 2D array
+        
         for linenum, line in enumerate(level):
             line = list(line)
             
@@ -246,6 +260,12 @@ class GridPhysics(Physics):
         asd = astartwo(search(level, frm, to))
         #print(asd)
         return asd
+"""
+    def astar_get_moves(self, level, wall='1', floor='0', frm=(0,0) goal='G'):
+        level = level.split("\n")
+        level = level[:-1]
+
+        for lin"""
 
 
 

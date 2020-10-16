@@ -16,6 +16,7 @@ from .physics import GridPhysics, ContinuousPhysics
 
 __all__ = [
     'SmartChaser',
+    'LookupChaser',
     'Bomber',
     'Chaser',
     'Conveyor',
@@ -304,6 +305,64 @@ class Chaser(RandomNPC):
         elif DOWN in options:
             self.physics.active_movement(self, DOWN)
 
+class LookupChaser(RandomNPC):
+    stype = None
+    fleeing = False
+    moves = []
+
+    def _closestTargets(self, game):
+        bestd = 1e100
+        res = []
+        for target in game.get_sprites(self.stype):
+            d = self.physics.distance(self.rect, target.rect)
+            if d < bestd:
+                bestd = d
+                res = [target]
+            elif d == bestd:
+                res.append(target)
+        return res
+
+    def _wheresWaldo(self, level, Waldo):
+        for line_num, line in enumerate(level):
+            for cell_num, cell in enumerate(line):
+                if cell == Waldo:
+                    return [line_num, cell_num]
+
+    def _get_moves_from_map(self, level):
+        max_ = 0
+        
+        for line in level:
+            for cell in line:
+                if cell > max_:
+                    max_ = cell
+        
+        for i in range(max_,-1,-1):
+            self.moves.append(self._wheresWaldo(level, i))
+
+    def _movesToward(self, game, target):
+        if self.moves == []:
+            self.moves = self._get_moves_from_map(self.physics.astar_map(game.levelstring, frm=(r.left, r.top)))
+        if len(self.moves) < 2:
+            raise Exception("You should've finished your moves already.")
+        frm = self.moves[-1]
+        to = self.moves[-2]
+        if frm[0] > to[0]:
+            return DOWN
+        elif frm[0] < to[0]:
+            return UP
+        elif frm[1] > to[1]:
+            return LEFT
+        else:
+            return RIGHT
+
+    def update(self):
+        VGDLSprite.update(self, game)
+        for target in self._closestTargets(game):
+            options.extend([self._movesToward(game, target)])
+        if len(options) == 0:
+            raise Exception("Cannot move!")
+        print(options[0])
+        self.physics.active_movement(self, options[0])
 
 class Fleeing(Chaser):
     """ Just reversing directions"""

@@ -137,6 +137,7 @@ def search(maze, start, end, cost=1):
             yet_to_visit_list.append(child)
 
 def astartwo(li):
+    print(li)
     ret = 0
     for line in li:
         for cell in line:
@@ -249,6 +250,9 @@ class GridPhysics(Physics):
                 if cell == 'A':
                     cell = '0'
 
+                if cell == 'w':
+                    cell = '1'
+
                 line[cellnum] = int(cell)
 
             level[linenum] =line
@@ -260,6 +264,39 @@ class GridPhysics(Physics):
         asd = astartwo(search(level, frm, to))
         #print(asd)
         return asd
+
+    def astar_map(self, level, frm=(0,0)):
+        level = level.split("\n")
+        level = level[:-1]
+        
+        for linenum, line in enumerate(level):
+            line = list(line)
+            
+            for cellnum, cell in enumerate(line):
+                
+                if cell == 'G':
+                    to = (linenum, cellnum)
+                    cell = '0'
+
+                if cell == 'E':
+                    cell = '0'
+
+                if cell == 'A':
+                    cell = '0'
+
+                if cell == 'w':
+                    cell = '1'
+
+                line[cellnum] = int(cell)
+
+            level[linenum] =line
+        try:
+            if level[frm[1]][frm[0]] == 1:
+                return 10000
+        except:
+            return 10000
+        return search(level, frm, to)
+        
 """
     def astar_get_moves(self, level, wall='1', floor='0', frm=(0,0) goal='G'):
         level = level.split("\n")

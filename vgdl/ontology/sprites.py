@@ -252,8 +252,6 @@ class SmartChaser(RandomNPC):
             options.extend(self._movesToward(game, target))
         if len(options) == 0:
             raise "Cannot move!"
-        #print("a")
-        print(options[0])
         self.physics.active_movement(self, options[0])#TODO: GONNA LOOK AT THIS
 
 class Chaser(RandomNPC):
@@ -341,7 +339,7 @@ class LookupChaser(RandomNPC):
 
     def _movesToward(self, game, target):
         if self.moves == []:
-            self.moves = self._get_moves_from_map(self.physics.astar_map(game.levelstring, frm=(r.left, r.top)))
+            self._get_moves_from_map(self.physics.astar_map(game.levelstring, frm=(self.rect.left, self.rect.top)))
         if len(self.moves) < 2:
             raise Exception("You should've finished your moves already.")
         frm = self.moves[-1]
@@ -355,8 +353,9 @@ class LookupChaser(RandomNPC):
         else:
             return RIGHT
 
-    def update(self):
+    def update(self, game):
         VGDLSprite.update(self, game)
+        options = []
         for target in self._closestTargets(game):
             options.extend([self._movesToward(game, target)])
         if len(options) == 0:

@@ -137,7 +137,6 @@ def search(maze, start, end, cost=1):
             yet_to_visit_list.append(child)
 
 def astartwo(li):
-    print(li)
     ret = 0
     for line in li:
         for cell in line:
@@ -262,7 +261,6 @@ class GridPhysics(Physics):
         except:
             return 10000
         asd = astartwo(search(level, frm, to))
-        #print(asd)
         return asd
 
     def astar_map(self, level, frm=(0,0)):

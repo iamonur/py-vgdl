@@ -340,14 +340,20 @@ class LookupChaser(RandomNPC):
     def _movesToward(self, game, target):
         if self.moves == []:
             self._get_moves_from_map(self.physics.astar_map(game.levelstring, frm=(self.rect.left, self.rect.top)))
-        if len(self.moves) < 2:
-            raise Exception("You should've finished your moves already.")
-        frm = self.moves[-1]
-        to = self.moves[-2]
+        index = 0
+        for i, elem in enumerate(self.moves):
+            if elem[1] == self.rect.left and elem[0] == self.rect.top:
+                index = i
+                break
+        frm = self.moves[index]
+        to = self.moves[index-1]
+        
         if frm[0] > to[0]:
-            return DOWN
-        elif frm[0] < to[0]:
             return UP
+            
+        elif frm[0] < to[0]:
+            return DOWN
+
         elif frm[1] > to[1]:
             return LEFT
         else:
@@ -360,7 +366,6 @@ class LookupChaser(RandomNPC):
             options.extend([self._movesToward(game, target)])
         if len(options) == 0:
             raise Exception("Cannot move!")
-        print(options[0])
         self.physics.active_movement(self, options[0])
 
 class Fleeing(Chaser):

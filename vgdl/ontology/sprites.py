@@ -328,7 +328,6 @@ class LookupChaser(RandomNPC):
 
     def _get_moves_from_map(self, level):
         max_ = 0
-        
         for line in level:
             for cell in line:
                 if cell > max_:
@@ -347,7 +346,7 @@ class LookupChaser(RandomNPC):
                 break
         frm = self.moves[index]
         to = self.moves[index-1]
-        
+
         if frm[0] > to[0]:
             return UP
             
@@ -356,8 +355,12 @@ class LookupChaser(RandomNPC):
 
         elif frm[1] > to[1]:
             return LEFT
-        else:
+
+        elif frm[1] < to [1]:
             return RIGHT
+        
+        else:
+            raise "WUT"
 
     def update(self, game):
         VGDLSprite.update(self, game)
@@ -366,7 +369,12 @@ class LookupChaser(RandomNPC):
             options.extend([self._movesToward(game, target)])
         if len(options) == 0:
             raise Exception("Cannot move!")
+        left = self.rect.left
+        top = self.rect.top
         self.physics.active_movement(self, options[0])
+        if self.rect.top == top and self.rect.left == left:
+            raise "Erroneous moves from the chaser"
+        
 
 class Fleeing(Chaser):
     """ Just reversing directions"""
